@@ -1,0 +1,12 @@
+api_version = "2025-01"
+
+[[extensions]]
+type = "theme"
+name = "Atchr Chat Widget"
+handle = "atchr-chat-widget"
+
+[extensions.settings]
+  [[extensions.settings.blocks]]
+  type = "atchr_chat"
+  name = "Atchr Chat Widget"
+  target = "body"
