@@ -10,7 +10,6 @@ import {
   List,
   Link,
   InlineStack,
-  Image,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
@@ -28,23 +27,13 @@ export default function Index() {
   };
 
   return (
-    <Page>
+    <Page fullWidth>
       <TitleBar title="Atchr Messaging" />
       <BlockStack gap="500">
         <Layout>
-          <Layout.Section>
+          <Layout.Section variant="twoThird">
             <Card>
               <BlockStack gap="400" padding="500">
-                <InlineStack gap="500" align="center">
-                  <Box width="80px">
-                    <Image
-                      source="/images/icon.png"
-                      alt="Atchr Messaging"
-                    />
-                  </Box>
-                  <Text variant="headingLg">Integrate Atchr Messaging</Text>
-                </InlineStack>
-                
                 <Box paddingBlockStart="300">
                   <Text variant="bodyLg">
                     Atchr by Chromesque is a secure AI Chatbot, Instant messaging & Analytics platform for organizations, businesses, teams and individuals.
@@ -57,42 +46,45 @@ export default function Index() {
                   </Text>
                 </Box>
                 
-                <Box paddingBlockStart="400">
-                  <BlockStack gap="300">
-                    <Text variant="headingMd">Getting Started</Text>
-                    <List type="number">
-                      <List.Item>Go to the Settings page</List.Item>
-                      <List.Item>Enter your Atchr embed code</List.Item>
-                      <List.Item>Save your settings</List.Item>
-                      <List.Item>Atchr widget will be visible in store</List.Item>
-                    </List>
-                  </BlockStack>
-                </Box>
+                <BlockStack gap="300">
+                  <Text variant="headingMd">Quick Setup</Text>
+                  <List type="number">
+                    <List.Item>
+                      <Link url="https://atchr.com/register" external>
+                        Create an Atchr account
+                      </Link> (if you don't have one)
+                    </List.Item>
+                    <List.Item>Get your Entity ID from the Atchr dashboard</List.Item>
+                    <List.Item>Configure the app with your Entity ID</List.Item>
+                    <List.Item>Add the Atchr Chat Widget app block to your theme</List.Item>
+                  </List>
+                </BlockStack>
                 
                 <Box paddingBlockStart="400">
                   <InlineStack gap="300">
                     <Button primary onClick={handleConfigureClick}>
                       Configure Atchr Messaging
                     </Button>
-                    <Button url="https://atchr.com" external>
-                      Get Atchr Account
+                    <Button url="https://atchr.com/register" external>
+                      Create an account
                     </Button>
                   </InlineStack>
                 </Box>
               </BlockStack>
             </Card>
           </Layout.Section>
-          
           <Layout.Section variant="oneThird">
             <BlockStack gap="500">
               <Card>
                 <BlockStack gap="200" padding="400">
                   <Text variant="headingMd">Features</Text>
                   <List>
-                    <List.Item>AI-powered chatbot capabilities</List.Item>
-                    <List.Item>Instant messaging for real-time customer support</List.Item>
-                    <List.Item>Real-time visitor reports & analytics.</List.Item>
-                    <List.Item>Real-time website monitoring</List.Item>
+                    <List.Item>AI-powered chatbot</List.Item>
+                    <List.Item>Real-time messaging</List.Item>
+                    <List.Item>Team collaboration</List.Item>
+                    <List.Item>Visitor analytics</List.Item>
+                    <List.Item>Website monitoring</List.Item>
+                    <List.Item>Customer support tools</List.Item>
                   </List>
                 </BlockStack>
               </Card>
@@ -103,7 +95,7 @@ export default function Index() {
                   <List>
                     <List.Item>
                       <Link url="https://atchr.com/download" external>
-                        Download
+                        Download App
                       </Link>
                     </List.Item>
                     <List.Item>
@@ -113,7 +105,7 @@ export default function Index() {
                     </List.Item>
                     <List.Item>
                       <Link url="mailto:support@chromesque.com" external>
-                        Contact Support
+                        Support
                       </Link>
                     </List.Item>
                     <List.Item>
