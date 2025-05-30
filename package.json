@@ -4,17 +4,8 @@
   "scripts": {
     "build": "remix vite:build",
     "dev": "shopify app dev",
-    "config:link": "shopify app config link",
-    "generate": "shopify app generate",
-    "deploy": "shopify app deploy",
-    "config:use": "shopify app config use",
-    "env": "shopify app env",
-    "start": "remix-serve ./build/server/index.js",
-    "docker-start": "npm run start",
-    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
-    "shopify": "shopify",
-    "graphql-codegen": "graphql-codegen",
-    "vite": "vite"
+    "start": "netlify dev",
+    "build:netlify": "npm run build"
   },
   "type": "module",
   "engines": {
@@ -23,6 +14,7 @@
   "dependencies": {
     "@remix-run/dev": "^2.16.1",
     "@remix-run/fs-routes": "^2.16.1",
+    "@remix-run/netlify": "^1.19.3",
     "@remix-run/node": "^2.16.1",
     "@remix-run/react": "^2.16.1",
     "@remix-run/serve": "^2.16.1",
