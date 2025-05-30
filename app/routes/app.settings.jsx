@@ -22,8 +22,8 @@ import { getEmbedCode, saveEmbedCode } from "../atchr.server";
 
 export const loader = async ({ request }) => {
   try {
-    const { session } = await authenticate.admin(request);
-    const embedCode = await getEmbedCode(session.shop);
+    const { session, admin } = await authenticate.admin(request);
+    const embedCode = await getEmbedCode(admin);
     return json({ 
       embedCode, 
       shop: session.shop,
@@ -45,7 +45,6 @@ export const loader = async ({ request }) => {
 export const action = async ({ request }) => {
   try {
     const { session, admin } = await authenticate.admin(request);
-    const shop = session.shop;
     
     const formData = await request.formData();
     const embedCode = formData.get("embedCode");
@@ -84,60 +83,7 @@ export const action = async ({ request }) => {
       );
     }
     
-    await saveEmbedCode(shop, sanitizedCode);
-
-    try {
-      const appResponse = await admin.graphql(`
-        query {
-          currentAppInstallation {
-            id
-          }
-        }
-      `);
-      
-      const appData = await appResponse.json();
-      const appInstallationId = appData.data?.currentAppInstallation?.id;
-      
-      if (appInstallationId) {
-        const metafieldResponse = await admin.graphql(`
-          mutation metafieldsSet($metafields: [MetafieldsSetInput!]!) {
-            metafieldsSet(metafields: $metafields) {
-              metafields {
-                id
-                namespace
-                key
-                value
-              }
-              userErrors {
-                field
-                message
-                code
-              }
-            }
-          }
-        `, {
-          variables: {
-            metafields: [
-              {
-                namespace: "atchr",
-                key: "entity_id",
-                value: sanitizedCode,
-                type: "single_line_text_field",
-                ownerId: appInstallationId
-              }
-            ]
-          }
-        });
-
-        const metafieldData = await metafieldResponse.json();
-        
-        if (metafieldData.data?.metafieldsSet?.userErrors?.length > 0) {
-          console.error("Metafield errors:", metafieldData.data.metafieldsSet.userErrors);
-        }
-      }
-    } catch (metafieldError) {
-      console.log("Metafield save failed, using database fallback:", metafieldError.message);
-    }
+    await saveEmbedCode(admin, sanitizedCode);
     
     return json({ 
       success: true, 

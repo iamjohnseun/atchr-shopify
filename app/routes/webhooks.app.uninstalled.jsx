@@ -1,16 +1,15 @@
 import { authenticate } from "../shopify.server";
-import db from "../db.server";
 
 export const action = async ({ request }) => {
   const { shop, session, topic } = await authenticate.webhook(request);
 
   console.log(`Received ${topic} webhook for ${shop}`);
 
-  // Webhook requests can trigger multiple times and after an app has already been uninstalled.
-  // If this webhook already ran, the session may have been deleted previously.
-  if (session) {
-    await db.session.deleteMany({ where: { shop } });
-  }
+  // When the app is uninstalled, Shopify automatically removes all app metafields
+  // No manual cleanup needed
+  
+  // Note: Session cleanup is handled by the session storage (MemorySessionStorage)
+  // and will be cleared when the app restarts or sessions expire
 
   return new Response();
 };

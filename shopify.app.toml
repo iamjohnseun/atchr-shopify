@@ -3,7 +3,7 @@
 client_id = "2c9d5e5206534a079a8e5ee0ef97a989"
 name = "Atchr Messaging"
 handle = "atchr-messaging"
-application_url = "https://possibly-manually-please-pacific.trycloudflare.com"
+application_url = "https://careers-rapidly-aurora-omaha.trycloudflare.com"
 embedded = true
 
 [build]
@@ -28,9 +28,9 @@ scopes = ""
 
 [auth]
 redirect_urls = [
-  "https://possibly-manually-please-pacific.trycloudflare.com/auth/callback",
-  "https://possibly-manually-please-pacific.trycloudflare.com/auth/shopify/callback",
-  "https://possibly-manually-please-pacific.trycloudflare.com/api/auth/callback"
+  "https://careers-rapidly-aurora-omaha.trycloudflare.com/auth/callback",
+  "https://careers-rapidly-aurora-omaha.trycloudflare.com/auth/shopify/callback",
+  "https://careers-rapidly-aurora-omaha.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
