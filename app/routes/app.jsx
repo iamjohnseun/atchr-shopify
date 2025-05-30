@@ -4,28 +4,13 @@ import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { NavMenu } from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 import { authenticate } from "../shopify.server";
-import { verifyShopifyHmac } from "../utils/hmac.server";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }) => {
-  const url = new URL(request.url);
-  const hmac = url.searchParams.get('hmac');
-  const shop = url.searchParams.get('shop');
-  
-  if (hmac) {
-    const isValidHmac = verifyShopifyHmac(request);
-    if (!isValidHmac) {
-      throw new Response("Unauthorized - Invalid HMAC", { status: 401 });
-    }
-  }
-
   await authenticate.admin(request);
 
-  return { 
-    apiKey: process.env.SHOPIFY_API_KEY || "",
-    shop: shop || ""
-  };
+  return { apiKey: process.env.SHOPIFY_API_KEY || "" };
 };
 
 export default function App() {
@@ -44,6 +29,7 @@ export default function App() {
   );
 }
 
+// Shopify needs Remix to catch some thrown responses, so that their headers are included in the response.
 export function ErrorBoundary() {
   return boundary.error(useRouteError());
 }
