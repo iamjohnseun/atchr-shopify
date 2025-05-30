@@ -1,7 +1,7 @@
 client_id = "2c9d5e5206534a079a8e5ee0ef97a989"
 name = "Atchr Messaging"
 handle = "atchr-messaging"
-application_url = "https://shopify.atchr.com"
+application_url = "https://store.atchr.com"
 embedded = true
 
 [build]
@@ -24,9 +24,9 @@ scopes = ""
 
 [auth]
 redirect_urls = [
-  "https://shopify.atchr.com/auth/callback",
-  "https://shopify.atchr.com/auth/shopify/callback",
-  "https://shopify.atchr.com/api/auth/callback"
+  "https://store.atchr.com/auth/callback",
+  "https://store.atchr.com/auth/store/callback",
+  "https://store.atchr.com/api/auth/callback"
 ]
 
 [pos]
