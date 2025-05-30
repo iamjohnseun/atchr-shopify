@@ -47,7 +47,7 @@ export default function Index() {
                 </Box>
                 
                 <BlockStack gap="300">
-                  <Text variant="headingMd">Quick Setup</Text>
+                  <Text variant="headingMd">Setup Instructions</Text>
                   <List type="number">
                     <List.Item>
                       <Link url="https://atchr.com/register" external>
