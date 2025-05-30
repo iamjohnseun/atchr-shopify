@@ -87,10 +87,24 @@ export async function saveEmbedCode(admin, embedCode) {
   }
 }
 
-export async function deleteEmbedCode(admin) {
-  // Metafields are automatically cleaned up when app is uninstalled
-  // But you can implement manual deletion if needed
-  return true;
+export async function deleteEmbedCode(shop) {
+  try {
+    console.log(`Cleaning up Atchr data for shop: ${shop}`);
+    
+    // Since we only store metafields and Shopify automatically cleans them up
+    // when the app is uninstalled, we just need to log this action
+    
+    // If you had external storage, you would clean it up here:
+    // - Database records
+    // - External API calls
+    // - File storage cleanup
+    
+    console.log(`Successfully cleaned up data for shop: ${shop}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to cleanup data for shop ${shop}:`, error);
+    throw error;
+  }
 }
 
 export function getAtchrEmbedUrl(embedCode) {

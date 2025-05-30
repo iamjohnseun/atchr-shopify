@@ -17,7 +17,15 @@ export const action = async ({ request }) => {
   } catch (error) {
     console.error("Error processing scopes update webhook:", error);
 
-    if (error.message?.includes('webhook') || error.message?.includes('signature') || error.message?.includes('authentication')) {
+    if (error.message?.includes('webhook') || 
+        error.message?.includes('signature') || 
+        error.message?.includes('authentication') ||
+        error.message?.includes('HMAC') ||
+        error.message?.includes('Unauthorized') ||
+        error.status === 401
+      ) {
+      console.error("HMAC validation failed for scopes update webhook");
+
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }

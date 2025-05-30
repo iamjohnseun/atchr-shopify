@@ -1,10 +1,19 @@
 import { authenticate } from "../shopify.server";
+import { deleteEmbedCode } from "../atchr.server";
 
 export const action = async ({ request }) => {
   try {
-    const { shop, session, topic } = await authenticate.webhook(request);
+    // This authenticate.webhook call handles HMAC validation automatically
+    const { shop, session, topic, payload } = await authenticate.webhook(request);
 
     console.log(`Received ${topic} webhook for ${shop}`);
+
+    try {
+      await deleteEmbedCode(shop);
+      console.log(`Successfully cleaned up Atchr data for ${shop}`);
+    } catch (cleanupError) {
+      console.error(`Failed to cleanup data for ${shop}:`, cleanupError);
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
@@ -14,14 +23,23 @@ export const action = async ({ request }) => {
   } catch (error) {
     console.error("Error processing app uninstalled webhook:", error);
     
-    // If authentication fails (invalid HMAC), return 401
-    if (error.message?.includes('webhook') || error.message?.includes('signature') || error.message?.includes('authentication')) {
+    // The authenticate.webhook function throws specific errors for HMAC validation failures
+    // Return 401 for authentication/HMAC failures
+    if (error.message?.includes('webhook') || 
+        error.message?.includes('signature') || 
+        error.message?.includes('authentication') ||
+        error.message?.includes('HMAC') ||
+        error.message?.includes('Unauthorized') ||
+        error.status === 401) {
+      console.error("HMAC validation failed for webhook");
+      
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
     }
     
+    // For other errors, return 500
     return new Response(JSON.stringify({ error: "Webhook processing failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
