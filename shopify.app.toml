@@ -19,13 +19,26 @@ api_version = "2025-01"
   topics = [ "app/uninstalled" ]
   uri = "/webhooks/app/uninstalled"
 
+  # Compliance webhooks (required for App Store)
+  [[webhooks.subscriptions]]
+  topics = [ "customers/data_request" ]
+  uri = "/webhooks/customers/data_request"
+
+  [[webhooks.subscriptions]]
+  topics = [ "customers/redact" ]
+  uri = "/webhooks/customers/redact"
+
+  [[webhooks.subscriptions]]
+  topics = [ "shop/redact" ]
+  uri = "/webhooks/shop/redact"
+
 [access_scopes]
 scopes = ""
 
 [auth]
 redirect_urls = [
   "https://store.atchr.com/auth/callback",
-  "https://store.atchr.com/auth/store/callback",
+  "https://store.atchr.com/auth/shopify/callback",
   "https://store.atchr.com/api/auth/callback"
 ]
 

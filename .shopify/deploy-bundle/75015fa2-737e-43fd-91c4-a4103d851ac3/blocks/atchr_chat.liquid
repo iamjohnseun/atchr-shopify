@@ -1,0 +1,106 @@
+{%- comment -%}
+Try to get entity ID from app metafields first, then fallback to API
+{%- endcomment -%}
+
+{%- assign entity_id = app.metafields.atchr.entity_id -%}
+
+<div id="atchr-widget-container-{{ block.id }}" class="atchr-widget-container"></div>
+
+<script>
+(function() {
+  var containerId = 'atchr-widget-container-{{ block.id }}';
+  var container = document.getElementById(containerId);
+  
+  if (container.getAttribute('data-atchr-loaded')) return;
+  container.setAttribute('data-atchr-loaded', 'true');
+  
+  var entityId = {{ entity_id | json }};
+  
+  function loadWidget(id) {
+    if (!id) {
+      container.innerHTML = '<div style="padding: 20px; background: #f8f8f8; border: 1px dashed #ccc; text-align: center; color: #666; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0 0 8px 0;"><strong>Atchr Chat Widget</strong></p><p style="margin: 0; font-size: 14px;">Please configure your Entity ID in the app settings.</p></div>';
+      return;
+    }
+    
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = "https://embed.atchr.com/" + id;
+    script.charset = "UTF-8";
+    script.setAttribute("crossorigin", "*");
+    script.setAttribute("scrolling", "no");
+    script.setAttribute("allowTransparency", "true");
+    
+    script.onerror = function() {
+      console.warn('Failed to load Atchr widget');
+      container.innerHTML = '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; text-align: center; color: #856404; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0;">Failed to load Atchr widget</p></div>';
+    };
+    
+    var firstScript = document.getElementsByTagName("script")[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
+  }
+  
+  if (entityId) {
+    loadWidget(entityId);
+  } else {
+    var shopDomain = '{{ shop.permanent_domain }}';
+    var appHandle = '{{ app.handle }}';
+    
+    var apiEndpoints = [
+      // Strategy 1: Standard Shopify app proxy path
+      window.location.protocol + '//' + shopDomain + '/apps/' + appHandle + '/api/widget-config?shop=' + shopDomain,
+      
+      // Strategy 2: Alternative app proxy path
+      window.location.protocol + '//' + shopDomain + '/apps/atchr-messaging/api/widget-config?shop=' + shopDomain,
+      
+      // Strategy 3: Direct app URL (for development/production)
+      // This will be populated by the server
+      '{{ app.url | default: "" }}/api/widget-config?shop=' + shopDomain
+    ];
+    
+    // Remove empty endpoints
+    apiEndpoints = apiEndpoints.filter(function(url) {
+      return url && !url.includes('undefined') && !url.startsWith('/api/');
+    });
+    
+    function tryApiCall(endpointIndex) {
+      if (endpointIndex >= apiEndpoints.length) {
+        console.error('All Atchr API endpoints failed');
+        loadWidget(null);
+        return;
+      }
+      
+      var apiUrl = apiEndpoints[endpointIndex];
+      console.log('Trying Atchr API endpoint:', apiUrl);
+      
+      fetch(apiUrl)
+        .then(function(response) {
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.json();
+        })
+        .then(function(data) {
+          loadWidget(data.entityId);
+        })
+        .catch(function(error) {
+          console.warn('Atchr API call failed for endpoint ' + (endpointIndex + 1) + ':', error);
+          // Try next endpoint
+          tryApiCall(endpointIndex + 1);
+        });
+    }
+    
+    if (apiEndpoints.length > 0) {
+      tryApiCall(0);
+    } else {
+      console.error('No valid Atchr API endpoints available');
+      loadWidget(null);
+    }
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Atchr Chat Widget",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

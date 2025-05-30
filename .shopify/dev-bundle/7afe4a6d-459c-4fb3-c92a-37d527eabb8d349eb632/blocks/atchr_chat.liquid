@@ -1,0 +1,47 @@
+{%- comment -%}
+Try to get entity ID from app metafields first, then fallback to API
+{%- endcomment -%}
+
+{%- assign entity_id = app.metafields.atchr.entity_id -%}
+
+<div id="atchr-widget-container-{{ block.id }}" class="atchr-widget-container"></div>
+
+<script>
+(function() {
+  var containerId = 'atchr-widget-container-{{ block.id }}';
+  var container = document.getElementById(containerId);
+  
+  if (container.getAttribute('data-atchr-loaded')) return;
+  container.setAttribute('data-atchr-loaded', 'true');
+  
+  var entityId = {{ entity_id | json }};
+  
+  if (!entityId) {
+    container.innerHTML = '<div style="padding: 20px; background: #f8f8f8; border: 1px dashed #ccc; text-align: center; color: #666; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0 0 8px 0;"><strong>Atchr Chat Widget</strong></p><p style="margin: 0; font-size: 14px;">Please configure your Entity ID in the app settings.</p></div>';
+    return;
+  }
+  
+  var script = document.createElement("script");
+  script.async = true;
+  script.src = "https://embed.atchr.com/" + entityId;
+  script.charset = "UTF-8";
+  script.setAttribute("crossorigin", "*");
+  script.setAttribute("scrolling", "no");
+  script.setAttribute("allowTransparency", "true");
+  
+  script.onerror = function() {
+    container.innerHTML = '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; text-align: center; color: #856404; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0;">Failed to load Atchr widget</p></div>';
+  };
+  
+  var firstScript = document.getElementsByTagName("script")[0];
+  firstScript.parentNode.insertBefore(script, firstScript);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Atchr Chat Widget",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}
