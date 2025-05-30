@@ -1,15 +1,31 @@
 import { authenticate } from "../shopify.server";
+import { verifyShopifyWebhook } from "../utils/webhook.server";
 
 export const action = async ({ request }) => {
-  const { shop, session, topic } = await authenticate.webhook(request);
-
-  console.log(`Received ${topic} webhook for ${shop}`);
-
-  // When the app is uninstalled, Shopify automatically removes all app metafields
-  // No manual cleanup needed
-  
-  // Note: Session cleanup is handled by the session storage (MemorySessionStorage)
-  // and will be cleared when the app restarts or sessions expire
-
-  return new Response();
+  try {
+    const payload = await verifyShopifyWebhook(request);
+    const { shop, topic } = await authenticate.webhook(request);
+    
+    console.log(`Received ${topic} webhook for ${shop}`);
+    
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+    
+  } catch (error) {
+    console.error("Error processing app uninstalled webhook:", error);
+    
+    if (error.message.includes('signature verification')) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    
+    return new Response(JSON.stringify({ error: "Webhook processing failed" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
 };

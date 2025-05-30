@@ -1,8 +1,10 @@
 import { authenticate } from "../shopify.server";
+import { verifyShopifyWebhook } from "../utils/webhook.server";
 
 export const action = async ({ request }) => {
   try {
-    const { shop, payload, topic } = await authenticate.webhook(request);
+    const payload = await verifyShopifyWebhook(request);
+    const { shop, topic } = await authenticate.webhook(request);
     
     console.log(`Received ${topic} webhook for ${shop}`);
     console.log("Customer redact payload:", payload);
@@ -39,9 +41,27 @@ export const action = async ({ request }) => {
     
   } catch (error) {
     console.error("Error processing customer redact webhook:", error);
+    
+    if (error.message.includes('signature verification')) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    
     return new Response(JSON.stringify({ error: "Webhook processing failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
     });
   }
+};
+
+export const loader = async () => {
+  return new Response(JSON.stringify({ 
+    message: "This is a webhook endpoint. It only accepts POST requests from Shopify.",
+    status: "ready"
+  }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" }
+  });
 };
