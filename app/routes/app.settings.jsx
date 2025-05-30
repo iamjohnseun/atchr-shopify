@@ -19,9 +19,20 @@ import {
 import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { getEmbedCode, saveEmbedCode } from "../atchr.server";
+import { verifyShopifyHmac } from "../utils/hmac.server";
 
 export const loader = async ({ request }) => {
   try {
+    const url = new URL(request.url);
+    const hmac = url.searchParams.get('hmac');
+    
+    if (hmac) {
+      const isValidHmac = verifyShopifyHmac(request);
+      if (!isValidHmac) {
+        throw new Response("Unauthorized - Invalid HMAC", { status: 401 });
+      }
+    }
+
     const { session, admin } = await authenticate.admin(request);
     const embedCode = await getEmbedCode(admin);
     return json({ 

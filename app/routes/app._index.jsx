@@ -13,8 +13,19 @@ import {
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
+import { verifyShopifyHmac } from "../utils/hmac.server";
 
 export const loader = async ({ request }) => {
+  const url = new URL(request.url);
+  const hmac = url.searchParams.get('hmac');
+  
+  if (hmac) {
+    const isValidHmac = verifyShopifyHmac(request);
+    if (!isValidHmac) {
+      throw new Response("Unauthorized - Invalid HMAC", { status: 401 });
+    }
+  }
+
   await authenticate.admin(request);
   return null;
 };
