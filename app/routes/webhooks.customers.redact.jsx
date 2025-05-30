@@ -1,10 +1,19 @@
-import { authenticate } from "../shopify.server";
+// import { authenticate } from "../shopify.server";
+import { verifyShopifyWebhook } from "../utils/webhook.server";
 
 export const action = async ({ request }) => {
   try {
-    const { shop, payload, topic } = await authenticate.webhook(request);
-    
+    // const { shop, payload, topic } = await authenticate.webhook(request);
+    // 1) Validate HMAC & grab raw body
+    const rawBody = await verifyShopifyWebhook(request);
+
+    // 2) Pull headers for shop & topic
+    const shop = request.headers.get("x-shopify-shop-domain");
+    const topic = request.headers.get("x-shopify-topic");
+
     console.log(`Received ${topic} webhook for ${shop}`);
+    // 3) Parse payload and process
+    const payload = JSON.parse(rawBody);
     console.log("Customer redact payload:", payload);
     
     // Extract customer information from payload
@@ -40,7 +49,14 @@ export const action = async ({ request }) => {
   } catch (error) {
     console.error("Error processing customer redact webhook:", error);
     
-    if (error.message?.includes('webhook') || error.message?.includes('signature') || error.message?.includes('authentication')) {
+    if (
+      error.message?.includes('webhook') || 
+      error.message?.includes('signature') || 
+      error.message?.includes('authentication') ||
+      error.message?.includes('HMAC') ||
+      error.message?.includes('Unauthorized') ||
+      error.status === 401
+      ) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }

@@ -1,10 +1,20 @@
-import { authenticate } from "../shopify.server";
+// import { authenticate } from "../shopify.server";
+import { verifyShopifyWebhook } from "../utils/webhook.server";
 
 export const action = async ({ request }) => {
   try {
-    const { payload, session, topic, shop } = await authenticate.webhook(request);
+    // const { payload, session, topic, shop } = await authenticate.webhook(request);
+    // 1) Validate HMAC & grab raw body
+    const rawBody = await verifyShopifyWebhook(request);
+
+    // 2) Pull headers for shop & topic
+    const shop = request.headers.get("x-shopify-shop-domain");
+    const topic = request.headers.get("x-shopify-topic");
 
     console.log(`Received ${topic} webhook for ${shop}`);
+
+    // 3) Parse payload and process
+    const payload = JSON.parse(rawBody);
     const current = payload.current;
     
     console.log(`Scope updated for ${shop}: ${current.toString()}`);

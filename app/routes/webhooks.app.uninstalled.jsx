@@ -1,11 +1,19 @@
-import { authenticate } from "../shopify.server";
+// import { authenticate } from "../shopify.server";
+import { verifyShopifyWebhook } from "../utils/webhook.server";
 import { deleteEmbedCode } from "../atchr.server";
 
 export const action = async ({ request }) => {
   try {
     // This authenticate.webhook call handles HMAC validation automatically
-    const { shop, session, topic, payload } = await authenticate.webhook(request);
+    // const { shop, session, topic, payload } = await authenticate.webhook(request);
 
+    // 1) Validate HMAC & grab raw body
+    const rawBody = await verifyShopifyWebhook(request);
+
+    // 2) Pull headers for shop & topic
+    const shop = request.headers.get("x-shopify-shop-domain");
+    const topic = request.headers.get("x-shopify-topic");
+ 
     console.log(`Received ${topic} webhook for ${shop}`);
 
     try {
@@ -31,8 +39,7 @@ export const action = async ({ request }) => {
         error.message?.includes('HMAC') ||
         error.message?.includes('Unauthorized') ||
         error.status === 401) {
-      console.error("HMAC validation failed for webhook");
-      
+
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
