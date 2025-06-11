@@ -4,7 +4,7 @@ import {
   AppDistribution,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
-import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
+import { MemorySessionStorage } from "@shopify/shopify-app-session-storage-memory";
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -13,13 +13,7 @@ const shopify = shopifyApp({
   scopes: process.env.SCOPES?.split(",") || [],
   appUrl: process.env.SHOPIFY_APP_URL || "",
   authPathPrefix: "/auth",
-  sessionStorage: new PrismaSessionStorage(prisma, {
-    sessionCookieOptions: {
-      sameSite: "none",
-      secure: true,
-      httpOnly: true,
-    },
-  }),
+  sessionStorage: new MemorySessionStorage(),
   distribution: AppDistribution.AppStore,
   isEmbeddedApp: true,
   useOnlineTokens: true,
