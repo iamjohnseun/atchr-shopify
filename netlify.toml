@@ -15,12 +15,20 @@
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
 
 [[redirects]]
-  from = "/api/*"
+  from = "/auth/*"
   to = "/.netlify/functions/server"
   status = 200
+  # Add this to ensure auth callbacks work properly
+  force = true
 
 [[redirects]]
-  from = "/auth/*"
+  from = "/api/auth/*"
+  to = "/.netlify/functions/server" 
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/*"
   to = "/.netlify/functions/server"
   status = 200
 
