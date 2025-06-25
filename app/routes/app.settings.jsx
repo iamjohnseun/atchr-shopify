@@ -30,24 +30,14 @@ export function ErrorBoundary() {
 }
 
 export const loader = async ({ request }) => {
-  try {
-    const { session, admin } = await authenticate.admin(request);
-    const embedCode = await getEmbedCode(admin);
-    return json({ 
-      embedCode, 
-      shop: session.shop,
-      defaultWidgetId: process.env.ATCHR_DEFAULT_WIDGET_ID,
-      appUrl: process.env.SHOPIFY_APP_URL
-    });
-  } catch (error) {
-    console.error("Authentication or data loading failed:", error);
-    throw new Response("Redirecting to authenticate", {
-      status: 302,
-      headers: {
-        Location: "/auth"
-      }
-    });
-  }
+  const { session, admin } = await authenticate.admin(request);
+  const embedCode = await getEmbedCode(admin);
+  return json({ 
+    embedCode, 
+    shop: session.shop,
+    defaultWidgetId: process.env.ATCHR_DEFAULT_WIDGET_ID,
+    appUrl: process.env.SHOPIFY_APP_URL
+  });
 };
 
 export const action = async ({ request }) => {
