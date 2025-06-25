@@ -1,3 +1,4 @@
+import { useNavigate } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -10,8 +11,7 @@ import {
   Link,
   InlineStack,
 } from "@shopify/polaris";
-import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
-import { Redirect } from "@shopify/app-bridge/actions";
+import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -20,11 +20,10 @@ export const loader = async ({ request }) => {
 };
 
 export default function Index() {
-  const app = useAppBridge();
+  const navigate = useNavigate();
   
   const handleConfigureClick = () => {
-    const redirect = Redirect.create(app);
-    redirect.dispatch(Redirect.Action.APP, "/app/settings");
+    navigate("/app/settings");
   };
 
   return (
