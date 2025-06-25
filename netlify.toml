@@ -11,6 +11,8 @@
   [headers.values]
     X-Frame-Options = "ALLOWALL"
     Content-Security-Policy = "frame-ancestors https://*.myshopify.com https://admin.shopify.com;"
+    Cross-Origin-Embedder-Policy = "unsafe-none"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
 
 [[redirects]]
   from = "/api/*"

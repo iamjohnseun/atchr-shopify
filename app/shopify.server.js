@@ -18,7 +18,8 @@ const shopify = shopifyApp({
   isEmbeddedApp: true,
   useOnlineTokens: true,
   future: {
-    unstable_newEmbeddedAuthStrategy: true,
+    // Remove or comment out this line:
+    // unstable_newEmbeddedAuthStrategy: true,
   },
   ...(process.env.SHOP_CUSTOM_DOMAIN
     ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }
