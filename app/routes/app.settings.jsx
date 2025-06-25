@@ -20,6 +20,15 @@ import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { getEmbedCode, saveEmbedCode } from "../atchr.server";
 
+export function ErrorBoundary() {
+  return (
+    <div>
+      <h1>Something went wrong</h1>
+      <p>Please refresh the page and try again.</p>
+    </div>
+  );
+}
+
 export const loader = async ({ request }) => {
   try {
     const { session, admin } = await authenticate.admin(request);
@@ -31,13 +40,12 @@ export const loader = async ({ request }) => {
       appUrl: process.env.SHOPIFY_APP_URL
     });
   } catch (error) {
-    console.error("Failed to load embed code:", error);
-    return json({ 
-      embedCode: null, 
-      shop: null, 
-      error: "Failed to load settings",
-      defaultWidgetId: process.env.ATCHR_DEFAULT_WIDGET_ID,
-      appUrl: process.env.SHOPIFY_APP_URL
+    console.error("Authentication or data loading failed:", error);
+    throw new Response("Redirecting to authenticate", {
+      status: 302,
+      headers: {
+        Location: "/auth"
+      }
     });
   }
 };
