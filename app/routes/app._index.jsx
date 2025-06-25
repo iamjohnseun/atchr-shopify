@@ -27,7 +27,7 @@ export default function Index() {
     try {
       // Method 1: Direct window location (for testing)
       console.log("Method 1: window.location");
-      window.location.href = "/app/settings";
+      window.location.assign("/app/settings");
     } catch (error) {
       console.log("Method 1 failed:", error);
       
