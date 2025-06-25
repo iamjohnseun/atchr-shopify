@@ -1,4 +1,4 @@
-import { useNavigate } from "@remix-run/react";
+import { useNavigate, Link as RemixLink } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -23,6 +23,7 @@ export default function Index() {
   const navigate = useNavigate();
   
   const handleConfigureClick = () => {
+    console.log("Configure button clicked, navigating to /app/settings");
     navigate("/app/settings");
   };
 
@@ -65,6 +66,11 @@ export default function Index() {
                     <Button primary onClick={handleConfigureClick}>
                       Configure Atchr Messaging
                     </Button>
+                    <RemixLink to="/app/settings">
+                      <Button variant="primary">
+                        Configure Atchr Messaging (Link)
+                      </Button>
+                    </RemixLink>
                     <Button url="https://atchr.com/register" external>
                       Create an account
                     </Button>
