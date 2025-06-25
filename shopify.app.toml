@@ -38,8 +38,9 @@ scopes = ""
 [auth]
 redirect_urls = [
   "https://store.atchr.com/auth/callback",
-  "https://store.atchr.com/auth/shopify/callback",
-  "https://store.atchr.com/api/auth/callback"
+  # Remove these problematic URLs:
+  # "https://store.atchr.com/auth/shopify/callback",
+  # "https://store.atchr.com/api/auth/callback"
 ]
 
 [pos]
