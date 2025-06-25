@@ -12,6 +12,7 @@ import {
   InlineStack,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
+import { Redirect } from "@shopify/app-bridge/actions";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -23,8 +24,21 @@ export default function Index() {
   const navigate = useNavigate();
   
   const handleConfigureClick = () => {
-    console.log("Configure button clicked, navigating to /app/settings");
-    navigate("/app/settings");
+    try {
+      // Method 1: Direct window location (for testing)
+      console.log("Method 1: window.location");
+      window.location.href = "/app/settings";
+    } catch (error) {
+      console.log("Method 1 failed:", error);
+      
+      try {
+        // Method 2: Remix navigate
+        console.log("Method 2: Remix navigate");
+        navigate("/app/settings");
+      } catch (error2) {
+        console.log("Method 2 failed:", error2);
+      }
+    }
   };
 
   return (
@@ -66,11 +80,6 @@ export default function Index() {
                     <Button primary onClick={handleConfigureClick}>
                       Configure Atchr Messaging
                     </Button>
-                    <RemixLink to="/app/settings">
-                      <Button variant="primary">
-                        Configure Atchr Messaging (Link)
-                      </Button>
-                    </RemixLink>
                     <Button url="https://atchr.com/register" external>
                       Create an account
                     </Button>
