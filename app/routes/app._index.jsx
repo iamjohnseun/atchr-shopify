@@ -1,3 +1,4 @@
+import { useNavigate } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -19,9 +20,10 @@ export const loader = async ({ request }) => {
 };
 
 export default function Index() {
+  const navigate = useNavigate();
   
   const handleConfigureClick = () => {
-    window.location.assign("/app/settings");
+    navigate("/app/settings");
   };
 
   return (
