@@ -1,4 +1,4 @@
-import { useNavigate, Link as RemixLink } from "@remix-run/react";
+import { useNavigate, useLocation } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -12,7 +12,6 @@ import {
   InlineStack,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { Redirect } from "@shopify/app-bridge/actions";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -22,22 +21,16 @@ export const loader = async ({ request }) => {
 
 export default function Index() {
   const navigate = useNavigate();
+  const location = useLocation();
   
   const handleConfigureClick = () => {
+    console.log("Current location:", location.pathname);
+    console.log("Navigating to /app/settings...");
     try {
-      // Method 1: Direct window location (for testing)
-      console.log("Method 1: window.location");
-      window.location.assign("/app/settings");
+      navigate("/app/settings");
+      console.log("Navigation called successfully");
     } catch (error) {
-      console.log("Method 1 failed:", error);
-      
-      try {
-        // Method 2: Remix navigate
-        console.log("Method 2: Remix navigate");
-        navigate("/app/settings");
-      } catch (error2) {
-        console.log("Method 2 failed:", error2);
-      }
+      console.error("Navigation failed:", error);
     }
   };
 
