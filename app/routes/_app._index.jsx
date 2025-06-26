@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -21,17 +21,9 @@ export const loader = async ({ request }) => {
 
 export default function Index() {
   const navigate = useNavigate();
-  const location = useLocation();
   
   const handleConfigureClick = () => {
-    console.log("Current location:", location.pathname);
-    console.log("Navigating to /app/settings...");
-    try {
-      navigate("/app/settings");
-      console.log("Navigation called successfully");
-    } catch (error) {
-      console.error("Navigation failed:", error);
-    }
+    navigate("/settings");
   };
 
   return (
