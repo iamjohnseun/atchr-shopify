@@ -283,7 +283,7 @@ export default function SettingsPage() {
                   <List>
                     <List.Item>
                       Open{" "}
-                      <Link url="https://dashboard.atchr.com" external target="_parent">
+                      <Link url="https://dashboard.atchr.com" external target="_blank">
                         Atchr Dashboard
                       </Link>
                     </List.Item>
@@ -299,17 +299,17 @@ export default function SettingsPage() {
                   <Text variant="headingMd">Need Help?</Text>
                   <List>
                     <List.Item>
-                      <Link url="https://atchr.com/register" external target="_parent">
+                      <Link url="https://atchr.com/register" external target="_blank">
                         Create an account
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="https://atchr.com/support" external target="_parent">
+                      <Link url="https://atchr.com/support" external target="_blank">
                         Documentation
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="mailto:support@chromesque.com" external target="_parent">
+                      <Link url="mailto:support@chromesque.com" external target="_blank">
                         Contact Support
                       </Link>
                     </List.Item>

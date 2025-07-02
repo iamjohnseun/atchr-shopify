@@ -50,7 +50,7 @@ export default function Index() {
                   <Text variant="headingMd">Setup Instructions</Text>
                   <List type="number">
                     <List.Item>
-                      <Link url="https://atchr.com/register" external target="_parent">
+                      <Link url="https://atchr.com/register" external target="_blank">
                         Create an Atchr account
                       </Link> (if you don't have one)
                     </List.Item>
@@ -65,7 +65,7 @@ export default function Index() {
                     <Button primary onClick={handleConfigureClick}>
                       Configure Atchr Messaging
                     </Button>
-                    <Button url="https://atchr.com/register" external target="_parent">
+                    <Button url="https://atchr.com/register" external target="_blank">
                       Create an account
                     </Button>
                   </InlineStack>
@@ -94,22 +94,22 @@ export default function Index() {
                   <Text variant="headingMd">Resources</Text>
                   <List>
                     <List.Item>
-                      <Link url="https://atchr.com/download" external target="_parent">
+                      <Link url="https://atchr.com/download" external target="_blank">
                         Download App
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="https://atchr.com/support" external target="_parent">
+                      <Link url="https://atchr.com/support" external target="_blank">
                         Documentation
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="mailto:support@chromesque.com" external target="_parent">
+                      <Link url="mailto:support@chromesque.com" external target="_blank">
                         Support
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="https://atchr.com/terms" external target="_parent">
+                      <Link url="https://atchr.com/terms" external target="_blank">
                         Terms of Service
                       </Link>
                     </List.Item>
