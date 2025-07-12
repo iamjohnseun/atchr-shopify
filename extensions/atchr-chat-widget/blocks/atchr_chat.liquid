@@ -1,23 +1,23 @@
 {%- comment -%}
-Atchr Chat Widget
+Atchr Chat Widget - Theme Block
 {%- endcomment -%}
 
 {%- liquid
   assign entity_id = block.settings.entity_id
   if entity_id == blank
     assign entity_id = app.metafields.atchr.entity_id
+    if entity_id == blank and request.design_mode
+      assign entity_id = 'Example: 12345678-90ab-cdef-ghij-klmnopqrstuv'
+    endif
   endif
-  
-  assign widget_enabled = block.settings.widget_enabled | default: true
 -%}
 
 <div 
   id="atchr-widget-container-{{ block.id }}" 
   class="atchr-widget-container"
-  {{ block.shopify_attributes }}
->
+  {{ block.shopify_attributes }}>
   {%- if request.design_mode -%}
-    {%- comment -%} Theme Editor Preview {%- endcomment -%}
+    {%- comment -%} Theme-editor preview when enabled {%- endcomment -%}
     <div class="atchr-preview-placeholder">
       <div class="atchr-preview-content">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,9 +34,6 @@ Atchr Chat Widget
           <p class="status-warning">⚠ Entity ID not configured</p>
           <p class="preview-note">Configure in your Atchr Settings</p>
         {%- endif -%}
-        {%- unless widget_enabled -%}
-          <p class="status-disabled">Widget is currently disabled</p>
-        {%- endunless -%}
       </div>
     </div>
   {%- endif -%}
@@ -54,12 +51,11 @@ Atchr Chat Widget
     border-radius: 8px;
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    margin: 16px 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
   }
   
   .atchr-preview-content h4 {
-    margin: 12px 0 8px 0;
+    margin: 12px 0 8px;
     color: #202223;
     font-size: 16px;
     font-weight: 600;
@@ -69,77 +65,68 @@ Atchr Chat Widget
     margin: 6px 0;
     font-size: 14px;
   }
-  
-  .status-success {
-    color: #008060;
-    font-weight: 500;
-  }
-  
-  .status-warning {
-    color: #b95000;
-    font-weight: 500;
-  }
-  
-  .status-disabled {
-    color: #6d7175;
-    font-style: italic;
-  }
-  
-  .preview-note {
-    color: #6d7175;
-    font-size: 13px;
+
+  .status-success   { color: #008060; font-weight: 500; }
+  .status-warning   { color: #b95000; font-weight: 500; }
+  .preview-note     { color: #6d7175; font-size: 13px; }
+
+  /* ---------- POSITION ---------- */
+  #atchr-widget-container-{{ block.id }} {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
   }
 </style>
 
 <script>
-(function() {
-  var containerId = 'atchr-widget-container-{{ block.id }}';
-  var container = document.getElementById(containerId);
-  
-  if (!container || container.getAttribute('data-atchr-loaded')) return;
-  container.setAttribute('data-atchr-loaded', 'true');
-
-  // Handle Atchr Dashboard links - open in new tab
-  document.addEventListener('DOMContentLoaded', function() {
-    var atchrLinks = document.querySelectorAll('a[href*="atchr.com"]');
-    atchrLinks.forEach(function(link) {
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer');
+  (function() {
+    // Handle Atchr Dashboard links - open in new tab
+    document.addEventListener('DOMContentLoaded', function() {
+      var atchrLinks = document.querySelectorAll('a[href*="atchr.com"]');
+      atchrLinks.forEach(function(link) {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      });
     });
-  });
-  
-  // Don't load the actual widget in Theme Editor design mode
-  if (window.Shopify && window.Shopify.designMode) {
-    return;
-  }
-  
-  var entityId = {{ entity_id | json }};
-  var widgetEnabled = {{ widget_enabled | json }};
-  
-  if (!widgetEnabled) {
-    return;
-  }
-  
-  if (!entityId) {
-    container.innerHTML = '<div style="padding: 20px; background: #f8f8f8; border: 1px dashed #ccc; text-align: center; color: #666; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0 0 8px 0;"><strong>Atchr Chat Widget</strong></p><p style="margin: 0; font-size: 14px;">Please configure your Entity ID in the app settings.</p></div>';
-    return;
-  }
-  
-  var script = document.createElement("script");
-  script.async = true;
-  script.src = "https://embed.atchr.com/" + entityId;
-  script.charset = "UTF-8";
-  script.setAttribute("crossorigin", "*");
-  script.setAttribute("scrolling", "no");
-  script.setAttribute("allowTransparency", "true");
-  
-  script.onerror = function() {
-    container.innerHTML = '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; text-align: center; color: #856404; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0;">Failed to load Atchr widget</p></div>';
-  };
-  
-  var firstScript = document.getElementsByTagName("script")[0];
-  firstScript.parentNode.insertBefore(script, firstScript);
-})();
+    
+    if (window.Shopify && window.Shopify.designMode) {
+      document.addEventListener('shopify:block:select', function(event) {
+        const block = event.target;
+        const entityId = block.dataset.entityId;
+        const input = block.querySelector('[id*="entity_id"]');
+        if (input && entityId) {
+          input.placeholder = entityId;
+        }
+      });
+    }
+    
+    var entityId = {{ entity_id | json }};
+    var isEmbed = {% if block.target == 'body' %}true{% else %}false{% endif %};
+
+    var containerId = 'atchr-widget-container-{{ block.id }}';
+    var container = document.getElementById(containerId);
+    
+    if (!entityId) {
+      container.innerHTML = '<div style="padding: 20px; background: #f8f8f8; border: 1px dashed #ccc; text-align: center; color: #666; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0 0 8px 0;"><strong>Atchr Chat Widget</strong></p><p style="margin: 0; font-size: 14px;">Please configure your Entity ID in the Atchr Messaging settings.</p></div>';
+      return;
+    }
+    
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = "https://embed.atchr.com/" + entityId;
+    script.charset = "UTF-8";
+    script.setAttribute("crossorigin", "*");
+    script.setAttribute("scrolling", "no");
+    script.setAttribute("allowTransparency", "true");
+    
+    script.onerror = function() {
+      container.innerHTML = '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; text-align: center; color: #856404; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0;">Failed to load Atchr widget</p></div>';
+    };
+    
+    var firstScript = document.getElementsByTagName("script")[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
+  })();
 </script>
 
 {% schema %}
@@ -155,15 +142,8 @@ Atchr Chat Widget
       "type": "text",
       "id": "entity_id",
       "label": "Entity ID",
-      "info": "Override the Entity ID for this specific widget instance. Leave blank to use the default Atchr Settings.",
-      "placeholder": "{{ app.metafields.atchr.entity_id | default: 'Enter Entity ID' }}"
-    },
-    {
-      "type": "checkbox",
-      "id": "widget_enabled",
-      "label": "Enable Widget",
-      "default": true,
-      "info": "Uncheck to temporarily disable this widget instance"
+      "info": "Override this widget's Entity ID. Leave blank to use the default ID in your Atchr settings.",
+      "placeholder": "e.g. 12345678-90ab-cdef-ghij-klmnopqrstuv"
     },
     {
       "type": "header",
@@ -171,15 +151,7 @@ Atchr Chat Widget
     },
     {
       "type": "paragraph",
-      "content": "Widget appearance, colors, and positioning are managed through your [Atchr Dashboard](https://atchr.com/redirect). Changes made there will automatically apply to all your widgets."
-    },
-    {
-      "type": "header",
-      "content": "Need Help?"
-    },
-    {
-      "type": "paragraph",
-      "content": "Visit your [Atchr Dashboard](https://atchr.com/redirect) to:\n• Get your Entity ID\n• Customize widget appearance\n• Configure chat settings\n• View analytics"
+      "content": "Widget appearance, colors, and positioning can be changed on your [Atchr Dashboard](https://atchr.com/redirect)."
     }
   ]
 }
