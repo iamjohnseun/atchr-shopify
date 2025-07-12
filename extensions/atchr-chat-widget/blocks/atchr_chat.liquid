@@ -1,20 +1,125 @@
 {%- comment -%}
-Try to get entity ID from app metafields first, then fallback to API
+Atchr Chat Widget
 {%- endcomment -%}
 
-{%- assign entity_id = app.metafields.atchr.entity_id -%}
+{%- liquid
+  assign entity_id = block.settings.entity_id
+  if entity_id == blank
+    assign entity_id = app.metafields.atchr.entity_id
+  endif
+  
+  assign widget_enabled = block.settings.widget_enabled | default: true
+  assign default_entity_id = app.metafields.atchr.entity_id | default: "Not configured"
+-%}
 
-<div id="atchr-widget-container-{{ block.id }}" class="atchr-widget-container"></div>
+<div 
+  id="atchr-widget-container-{{ block.id }}" 
+  class="atchr-widget-container"
+  {{ block.shopify_attributes }}
+>
+  {%- if request.design_mode -%}
+    {%- comment -%} Theme Editor Preview {%- endcomment -%}
+    <div class="atchr-preview-placeholder">
+      <div class="atchr-preview-content">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z" fill="#007cba"/>
+          <circle cx="7" cy="10" r="1" fill="#007cba"/>
+          <circle cx="12" cy="10" r="1" fill="#007cba"/>
+          <circle cx="17" cy="10" r="1" fill="#007cba"/>
+        </svg>
+        <h4>Atchr Chat Widget</h4>
+        {%- if entity_id -%}
+          <p class="status-success">✓ Widget configured (ID: {{ entity_id | truncate: 8 }})</p>
+          <p class="preview-note">Widget will appear on your storefront</p>
+        {%- else -%}
+          <p class="status-warning">⚠ Entity ID not configured</p>
+          <p class="preview-note">Configure in your Atchr Settings</p>
+        {%- endif -%}
+        {%- unless widget_enabled -%}
+          <p class="status-disabled">Widget is currently disabled</p>
+        {%- endunless -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .atchr-widget-container {
+    position: relative;
+  }
+  
+  .atchr-preview-placeholder {
+    padding: 24px;
+    background: #ffffff;
+    border: 2px dashed #e1e3e5;
+    border-radius: 8px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 16px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .atchr-preview-content h4 {
+    margin: 12px 0 8px 0;
+    color: #202223;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .atchr-preview-content p {
+    margin: 6px 0;
+    font-size: 14px;
+  }
+  
+  .status-success {
+    color: #008060;
+    font-weight: 500;
+  }
+  
+  .status-warning {
+    color: #b95000;
+    font-weight: 500;
+  }
+  
+  .status-disabled {
+    color: #6d7175;
+    font-style: italic;
+  }
+  
+  .preview-note {
+    color: #6d7175;
+    font-size: 13px;
+  }
+</style>
 
 <script>
 (function() {
   var containerId = 'atchr-widget-container-{{ block.id }}';
   var container = document.getElementById(containerId);
   
-  if (container.getAttribute('data-atchr-loaded')) return;
+  if (!container || container.getAttribute('data-atchr-loaded')) return;
   container.setAttribute('data-atchr-loaded', 'true');
+
+  // Handle Atchr Dashboard links - open in new tab
+  document.addEventListener('DOMContentLoaded', function() {
+    var atchrLinks = document.querySelectorAll('a[href*="atchr.com"]');
+    atchrLinks.forEach(function(link) {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+  
+  // Don't load the actual widget in Theme Editor design mode
+  if (window.Shopify && window.Shopify.designMode) {
+    return;
+  }
   
   var entityId = {{ entity_id | json }};
+  var widgetEnabled = {{ widget_enabled | json }};
+  
+  if (!widgetEnabled) {
+    return;
+  }
   
   if (!entityId) {
     container.innerHTML = '<div style="padding: 20px; background: #f8f8f8; border: 1px dashed #ccc; text-align: center; color: #666; font-family: -apple-system, BlinkMacSystemFont, sans-serif; border-radius: 4px;"><p style="margin: 0 0 8px 0;"><strong>Atchr Chat Widget</strong></p><p style="margin: 0; font-size: 14px;">Please configure your Entity ID in the app settings.</p></div>';
@@ -42,6 +147,46 @@ Try to get entity ID from app metafields first, then fallback to API
 {
   "name": "Atchr Chat Widget",
   "target": "body",
-  "settings": []
+  "settings": [
+    {
+      "type": "header",
+      "content": "Widget Settings"
+    },
+    {
+      "type": "text",
+      "id": "entity_id",
+      "label": "Entity ID",
+      "info": "Override the Entity ID for this specific widget instance. Leave blank to use the default Atchr Settings.",
+      "placeholder": "{{ app.metafields.atchr.entity_id | default: 'Enter Entity ID' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "widget_enabled",
+      "label": "Enable Widget",
+      "default": true,
+      "info": "Uncheck to temporarily disable this widget instance"
+    },
+    {
+      "type": "header",
+      "content": "Styling & Positioning"
+    },
+    {
+      "type": "paragraph",
+      "content": "Widget appearance, colors, and positioning are managed through your [Atchr Dashboard](https://atchr.com/redirect). Changes made there will automatically apply to all your widgets."
+    },
+    {
+      "type": "header",
+      "content": "Need Help?"
+    },
+    {
+      "type": "paragraph",
+      "content": "Visit your [Atchr Dashboard](https://atchr.com/redirect) to:\n• Get your Entity ID\n• Customize widget appearance\n• Configure chat settings\n• View analytics"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Atchr Chat Widget"
+    }
+  ]
 }
 {% endschema %}
