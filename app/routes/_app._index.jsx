@@ -1,4 +1,5 @@
-import { useNavigate } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -10,26 +11,44 @@ import {
   List,
   Link,
   InlineStack,
+  Banner,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
+import { getEmbedCode } from "../atchr.server";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
-  return null;
+  const { session, admin } = await authenticate.admin(request);
+  const embedCode = await getEmbedCode(admin);
+  return json({
+    embedCode,
+    shop: session.shop,
+  });
 };
 
 export default function Index() {
   const navigate = useNavigate();
+  const { embedCode, shop } = useLoaderData();
   
   const handleConfigureClick = () => {
     navigate("/settings");
   };
 
+  const isConfigured = embedCode && embedCode.trim() !== "";
+
   return (
     <Page fullWidth>
       <TitleBar title="Atchr Messaging" />
       <BlockStack gap="500">
+        {isConfigured && (
+          <Banner title="Widget Configured" tone="success">
+            <Text>
+              Your Atchr chat widget is configured and ready to use! 
+              You can now add it to your theme or view it on your storefront.
+            </Text>
+          </Banner>
+        )}
+        
         <Layout>
           <Layout.Section variant="twoThird">
             <Card>
@@ -47,27 +66,63 @@ export default function Index() {
                 </Box>
                 
                 <BlockStack gap="300">
-                  <Text variant="headingMd">Setup Instructions</Text>
-                  <List type="number">
-                    <List.Item>
-                      <Link url="https://atchr.com/register" external target="_blank">
-                        Create an Atchr account
-                      </Link> (if you don't have one)
-                    </List.Item>
-                    <List.Item>Get your Entity ID from the Atchr dashboard</List.Item>
-                    <List.Item>Configure the app with your Entity ID</List.Item>
-                    <List.Item>Add the Atchr Chat Widget app block to your theme</List.Item>
-                  </List>
+                  <Text variant="headingMd">
+                    {isConfigured ? "Your Widget is Ready" : "Setup Instructions"}
+                  </Text>
+                  
+                  {isConfigured ? (
+                    <List>
+                      <List.Item>
+                        ✅ Entity ID configured ({embedCode.substring(0, 8)}...)
+                      </List.Item>
+                      <List.Item>
+                        Add the widget to your theme via <strong>Online Store → Themes → Customize → App embeds</strong>
+                      </List.Item>
+                      <List.Item>
+                        Visit your storefront to see the chat widget in action
+                      </List.Item>
+                      <List.Item>
+                        Manage your widget settings in the{" "}
+                        <Link url="https://atchr.com/redirect" external target="_blank">
+                          Atchr Dashboard
+                        </Link>
+                      </List.Item>
+                    </List>
+                  ) : (
+                    <List type="number">
+                      <List.Item>
+                        <Link url="https://atchr.com/register" external target="_blank">
+                          Create an Atchr account
+                        </Link> (if you don't have one)
+                      </List.Item>
+                      <List.Item>Get your Entity ID from the Atchr dashboard</List.Item>
+                      <List.Item>Configure the app with your Entity ID</List.Item>
+                      <List.Item>Add the Atchr Chat Widget app block to your theme</List.Item>
+                    </List>
+                  )}
                 </BlockStack>
                 
                 <Box paddingBlockStart="400">
                   <InlineStack gap="300">
                     <Button primary onClick={handleConfigureClick}>
-                      Configure Atchr Messaging
+                      {isConfigured ? "Update Settings" : "Configure Atchr Messaging"}
                     </Button>
-                    <Button url="https://atchr.com/register" external target="_blank">
-                      Create an account
+                    <Button 
+                      url={isConfigured ? "https://atchr.com/redirect" : "https://atchr.com/register"} 
+                      external 
+                      target="_blank"
+                    >
+                      {isConfigured ? "Open Dashboard" : "Create an account"}
                     </Button>
+                    {isConfigured && (
+                      <Button 
+                        url={`https://${shop}`} 
+                        external 
+                        target="_blank"
+                      >
+                        View Storefront
+                      </Button>
+                    )}
                   </InlineStack>
                 </Box>
               </BlockStack>

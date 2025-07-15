@@ -246,9 +246,10 @@ export default function SettingsPage() {
                         </List>
 
                         <Text variant="bodySm" tone="subdued">
-                          <strong>Note:</strong> The app block has no
-                          configuration options - it automatically uses the
-                          Entity ID you set here.
+                          <strong>Note:</strong> The widget will use the Entity
+                          ID configured here by default. You can optionally
+                          override it with a different Entity ID in the theme
+                          editor settings.
                         </Text>
                       </BlockStack>
                     </Banner>
@@ -269,21 +270,23 @@ export default function SettingsPage() {
                     </List.Item>
                     <List.Item>Navigate to Online Store → Customise </List.Item>
                     <List.Item>Select "App embeds" from menu</List.Item>
-                    <List.Item>
-                      Search & Activate "Atchr Chat Widget"
-                    </List.Item>
+                    <List.Item>Search & Activate "Atchr Chat Widget"</List.Item>
                     <List.Item>Save your theme</List.Item>
                   </List>
                 </BlockStack>
               </Card>
-
+              {!embedCode && (
               <Card>
                 <BlockStack gap="300" padding="400">
                   <Text variant="headingMd">Find Your Entity ID</Text>
                   <List>
                     <List.Item>
                       Open{" "}
-                      <Link url="https://dashboard.atchr.com" external target="_blank">
+                      <Link
+                        url="https://dashboard.atchr.com"
+                        external
+                        target="_blank"
+                      >
                         Atchr Dashboard
                       </Link>
                     </List.Item>
@@ -293,23 +296,36 @@ export default function SettingsPage() {
                   </List>
                 </BlockStack>
               </Card>
+              )}
 
               <Card>
                 <BlockStack gap="300" padding="400">
                   <Text variant="headingMd">Need Help?</Text>
                   <List>
                     <List.Item>
-                      <Link url="https://atchr.com/register" external target="_blank">
+                      <Link
+                        url="https://atchr.com/register"
+                        external
+                        target="_blank"
+                      >
                         Create an account
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="https://atchr.com/support" external target="_blank">
+                      <Link
+                        url="https://atchr.com/support"
+                        external
+                        target="_blank"
+                      >
                         Documentation
                       </Link>
                     </List.Item>
                     <List.Item>
-                      <Link url="mailto:support@chromesque.com" external target="_blank">
+                      <Link
+                        url="mailto:support@chromesque.com"
+                        external
+                        target="_blank"
+                      >
                         Contact Support
                       </Link>
                     </List.Item>
