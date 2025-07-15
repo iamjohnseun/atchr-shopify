@@ -43,8 +43,8 @@ export default function Index() {
         {isConfigured && (
           <Banner title="Widget Configured" tone="success">
             <Text>
-              Your Atchr chat widget is configured and ready to use! 
-              You can now add it to your theme or view it on your storefront.
+              Atchr Messaging is configured and ready to use! 
+              You can now add it to your theme and view it on your storefront.
             </Text>
           </Banner>
         )}
@@ -73,16 +73,16 @@ export default function Index() {
                   {isConfigured ? (
                     <List>
                       <List.Item>
-                        ✅ Entity ID configured ({embedCode.substring(0, 8)}...)
+                        Entity ID configured: {embedCode.substring(0, 8)}xxxxxxxx
                       </List.Item>
                       <List.Item>
                         Add the widget to your theme via <strong>Online Store → Themes → Customize → App embeds</strong>
                       </List.Item>
                       <List.Item>
-                        Visit your storefront to see the chat widget in action
+                        Visit your storefront to see the chat widget.
                       </List.Item>
                       <List.Item>
-                        Manage your widget settings in the{" "}
+                        You can manage and customize your widget from the{" "}
                         <Link url="https://atchr.com/redirect" external target="_blank">
                           Atchr Dashboard
                         </Link>
