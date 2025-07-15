@@ -16,11 +16,72 @@ Atchr Chat Widget - Theme Block
   id="atchr-widget-container-{{ block.id }}" 
   class="atchr-widget-container"
   {{ block.shopify_attributes }}>
+    {%- if request.design_mode -%}
+    {%- comment -%} Theme-editor preview when enabled {%- endcomment -%}
+    <div class="atchr-preview-placeholder">
+      <div class="atchr-preview-content">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z" fill="#007cba"/>
+          <circle cx="7" cy="10" r="1" fill="#007cba"/>
+          <circle cx="12" cy="10" r="1" fill="#007cba"/>
+          <circle cx="17" cy="10" r="1" fill="#007cba"/>
+        </svg>
+        <h4>Atchr Chat Widget</h4>
+        {%- if entity_id -%}
+          <p class="status-success">✓ Widget configured (ID: {{ entity_id | truncate: 8 }})</p>
+          <p class="preview-note">Widget will appear on your storefront</p>
+        {%- else -%}
+          <p class="status-warning">⚠ Entity ID not configured</p>
+          <p class="preview-note">Configure in your Atchr Settings</p>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
 </div>
+
+
+<style>
+  .atchr-widget-container {
+    position: relative;
+  }
+  
+  .atchr-preview-placeholder {
+    padding: 24px;
+    background: #ffffff;
+    border: 2px dashed #e1e3e5;
+    border-radius: 8px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  }
+  
+  .atchr-preview-content h4 {
+    margin: 12px 0 8px;
+    color: #202223;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .atchr-preview-content p {
+    margin: 6px 0;
+    font-size: 14px;
+  }
+
+  .status-success   { color: #008060; font-weight: 500; }
+  .status-warning   { color: #b95000; font-weight: 500; }
+  .preview-note     { color: #6d7175; font-size: 13px; }
+
+  /* ---------- POSITION ---------- */
+  #atchr-widget-container-{{ block.id }} {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+  }
+</style>
 
 <script>
   (function() {
-    // Handle Atchr Dashboard links - open in new tab
     document.addEventListener('DOMContentLoaded', function() {
       var atchrLinks = document.querySelectorAll('a[href*="atchr.com"]');
       atchrLinks.forEach(function(link) {
@@ -28,17 +89,6 @@ Atchr Chat Widget - Theme Block
         link.setAttribute('rel', 'noopener noreferrer');
       });
     });
-    
-    if (window.Shopify && window.Shopify.designMode) {
-      document.addEventListener('shopify:block:select', function(event) {
-        const block = event.target;
-        const entityId = block.dataset.entityId;
-        const input = block.querySelector('[id*="entity_id"]');
-        if (input && entityId) {
-          input.placeholder = entityId;
-        }
-      });
-    }
     
     var entityId = {{ entity_id | json }};
     var isEmbed = {% if block.target == 'body' %}true{% else %}false{% endif %};
@@ -79,10 +129,10 @@ Atchr Chat Widget - Theme Block
     },
     {
       "type": "text",
-      "id": "entity_id",
+      "id": "atchr_entity_id",
       "label": "Entity ID",
       "info": "Override this widget's Entity ID. Leave blank to use the default ID in your Atchr settings.",
-      "placeholder": "e.g. 12345678-90ab-cdef-ghij"
+      "placeholder": "e.g. abc123-def456-ghi789"
     },
     {
       "type": "header",
