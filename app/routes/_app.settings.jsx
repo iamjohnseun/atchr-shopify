@@ -239,17 +239,18 @@ export default function SettingsPage() {
                             <strong>App embeds</strong>
                           </List.Item>
                           <List.Item>
-                            Find and activate{" "}
-                            <strong>"Atchr Chat Widget"</strong>
+                            Search and activate{" "}
+                            <strong>"Atchr Messaging"</strong>
                           </List.Item>
                           <List.Item>Save your theme</List.Item>
                         </List>
 
                         <Text variant="bodySm" tone="subdued">
                           <strong>Note:</strong> The widget will use the Entity
-                          ID configured here by default. You can optionally
-                          override it with a different Entity ID in the theme
-                          editor settings.
+                          ID configured here by default.
+                          <br />
+                          You can optionally override it with a different Entity
+                          ID in the theme editor settings.
                         </Text>
                       </BlockStack>
                     </Banner>
@@ -268,34 +269,36 @@ export default function SettingsPage() {
                     <List.Item>
                       Enter your Entity ID in this admin panel
                     </List.Item>
-                    <List.Item>Navigate to Online Store → Customise </List.Item>
+                    <List.Item>
+                      Navigate to Online Store → Themes → Customize
+                    </List.Item>
                     <List.Item>Select "App embeds" from menu</List.Item>
-                    <List.Item>Search & Activate "Atchr Chat Widget"</List.Item>
+                    <List.Item>Search & Activate "Atchr Messaging"</List.Item>
                     <List.Item>Save your theme</List.Item>
                   </List>
                 </BlockStack>
               </Card>
               {!embedCode && (
-              <Card>
-                <BlockStack gap="300" padding="400">
-                  <Text variant="headingMd">Find Your Entity ID</Text>
-                  <List>
-                    <List.Item>
-                      Open{" "}
-                      <Link
-                        url="https://dashboard.atchr.com"
-                        external
-                        target="_blank"
-                      >
-                        Atchr Dashboard
-                      </Link>
-                    </List.Item>
-                    <List.Item>Navigate to Entities</List.Item>
-                    <List.Item>Select your entity</List.Item>
-                    <List.Item>Copy your entity ID</List.Item>
-                  </List>
-                </BlockStack>
-              </Card>
+                <Card>
+                  <BlockStack gap="300" padding="400">
+                    <Text variant="headingMd">Find Your Entity ID</Text>
+                    <List>
+                      <List.Item>
+                        Open{" "}
+                        <Link
+                          url="https://dashboard.atchr.com"
+                          external
+                          target="_blank"
+                        >
+                          Atchr Dashboard
+                        </Link>
+                      </List.Item>
+                      <List.Item>Navigate to Entities</List.Item>
+                      <List.Item>Select your entity</List.Item>
+                      <List.Item>Copy your entity ID</List.Item>
+                    </List>
+                  </BlockStack>
+                </Card>
               )}
 
               <Card>
@@ -309,6 +312,15 @@ export default function SettingsPage() {
                         target="_blank"
                       >
                         Create an account
+                      </Link>
+                    </List.Item>
+                    <List.Item>
+                      <Link
+                        url="https://atchr.com/integrations/shopify"
+                        external
+                        target="_blank"
+                      >
+                        Shopify Integration
                       </Link>
                     </List.Item>
                     <List.Item>

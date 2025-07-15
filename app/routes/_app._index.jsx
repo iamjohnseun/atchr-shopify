@@ -73,7 +73,7 @@ export default function Index() {
                   {isConfigured ? (
                     <List>
                       <List.Item>
-                        Entity ID configured: {embedCode.substring(0, 8)}xxxxxxxx
+                        Entity ID configured: <strong>{embedCode.substring(0, 8)}xxxxxxxx</strong>
                       </List.Item>
                       <List.Item>
                         Add the widget to your theme via <strong>Online Store → Themes → Customize → App embeds</strong>
