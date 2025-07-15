@@ -7,7 +7,7 @@ Atchr Chat Widget - Theme Block
   if entity_id == blank
     assign entity_id = app.metafields.atchr.entity_id
     if entity_id == blank and request.design_mode
-      assign entity_id = 'Example: 12345678-90ab-cdef-ghij-klmnopqrstuv'
+      assign entity_id = 'e.g. abc123-def456-ghi789'
     endif
   endif
 -%}
@@ -131,7 +131,7 @@ Atchr Chat Widget - Theme Block
       "type": "text",
       "id": "atchr_entity_id",
       "label": "Entity ID",
-      "info": "Override this widget's Entity ID. Leave blank to use the default ID in your Atchr settings.",
+      "info": "Leave blank to use the default Entity ID.",
       "placeholder": "e.g. abc123-def456-ghi789"
     },
     {
@@ -141,6 +141,10 @@ Atchr Chat Widget - Theme Block
     {
       "type": "paragraph",
       "content": "Widget appearance, colors, and positioning can be changed on your [Atchr Dashboard](https://atchr.com/redirect)."
+    },
+    {
+      "type": "header",
+      "content": "Manage Installation"
     }
   ]
 }
