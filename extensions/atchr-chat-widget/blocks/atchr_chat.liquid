@@ -12,33 +12,8 @@ Atchr Chat Widget - Theme Block
   endif
 -%}
 
-<div 
-  id="atchr-widget-container-{{ block.id }}" 
-  class="atchr-widget-container"
-  {{ block.shopify_attributes }}>
-    {%- if request.design_mode -%}
-    {%- comment -%} Theme-editor preview when enabled {%- endcomment -%}
-    <div class="atchr-preview-placeholder">
-      <div class="atchr-preview-content">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z" fill="#007cba"/>
-          <circle cx="7" cy="10" r="1" fill="#007cba"/>
-          <circle cx="12" cy="10" r="1" fill="#007cba"/>
-          <circle cx="17" cy="10" r="1" fill="#007cba"/>
-        </svg>
-        <h4>Atchr Chat Widget</h4>
-        {%- if entity_id -%}
-          <p class="status-success">✓ Widget configured (ID: {{ entity_id | truncate: 8 }})</p>
-          <p class="preview-note">Widget will appear on your storefront</p>
-        {%- else -%}
-          <p class="status-warning">⚠ Entity ID not configured</p>
-          <p class="preview-note">Configure in your Atchr Settings</p>
-        {%- endif -%}
-      </div>
-    </div>
-  {%- endif -%}
+<div id="atchr-widget-container-{{ block.id }}" class="atchr-widget-container" {{ block.shopify_attributes }}>
 </div>
-
 
 <style>
   .atchr-widget-container {
@@ -103,7 +78,7 @@ Atchr Chat Widget - Theme Block
     
     var script = document.createElement("script");
     script.async = true;
-    script.src = "https://embed.atchr.com/" + entityId;
+    script.src = "https://embed.atchr.com/demo/" + entityId;
     script.charset = "UTF-8";
     script.setAttribute("crossorigin", "*");
     script.setAttribute("scrolling", "no");
